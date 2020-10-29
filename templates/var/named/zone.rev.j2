@@ -1,0 +1,22 @@
+$TTL 86400
+@ IN SOA dns-primary.{{ domain }}. admin.{{ domain }}. (
+  2020011800 ;Serial
+  3600 ;Refresh
+  1800 ;Retry
+  604800 ;Expire
+  86400 ;Minimum TTL
+)
+
+@ IN NS dns-primary.{{ domain }}.
+
+{{ nodes.service.ip_address.split('.')[3] }} IN PTR dns-primary.{{ domain }}.
+{{ nodes.bootstrap.ip_address.split('.')[3] }} IN PTR {{ nodes.bootstrap.hostname }}.{{ domain }}.
+{{ nodes.service.ip_address.split('.')[3] }} IN PTR {{ nodes.service.hostname }}.{{ domain }}.
+{% for m in nodes.masters %}
+{{ m.ip_address.split('.')[3] }} IN PTR {{ m.hostname }}.{{ domain }}.
+{% endfor %}
+
+{{ nodes.service.ip_address.split('.')[3] }} IN PTR api.{{ cluster_name }}.{{ domain }}.
+{{ nodes.service.ip_address.split('.')[3] }} IN PTR api-int.{{ cluster_name }}.{{ domain }}.
+
+;EOF

@@ -1,0 +1,82 @@
+---
+- hosts: service
+  gather_facts: false
+  vars_files:
+    - vars/main.yml
+  vars:
+    mirror_base_url: https://mirror.openshift.com/pub/openshift-v4
+    rhcos_base_url: "{{ mirror_base_url }}/dependencies/rhcos/{{ version.split('.')[0] }}.{{ version.split('.')[1] }}/{{ version }}"
+    rhcos_downloads:
+      - url: '{{ rhcos_base_url }}/rhcos-{{ version }}-x86_64-installer-initramfs.x86_64.img'
+        filename: initramfs.img
+      - url: '{{ rhcos_base_url }}/rhcos-{{ version }}-x86_64-installer-kernel-x86_64'
+        filename: kernel
+      - url: '{{ rhcos_base_url }}/rhcos-{{ version }}-x86_64-installer.x86_64.iso'
+        filename: installer.iso
+      - url: '{{ rhcos_base_url }}/rhcos-{{ version }}-x86_64-metal.x86_64.raw.gz'
+        filename: metal.raw.gz
+
+  tasks:
+
+    - name: Check if version file exists
+      stat:
+        path: '{{ download_dir }}/{{ version }}.txt'
+      register: version_result
+
+    - meta: end_play
+      when: version_result.stat.exists
+
+    - name: Delete ocp dir
+      file:
+        path: '{{ download_dir }}'
+        state: absent
+      
+    - name: create ocp directories
+      file:
+        path: "{{ item }}"
+        state: directory
+      with_items:
+        - /ocp
+        - '{{ download_dir }}'
+
+    - name: Download openshift-install-linux.tar.gz
+      get_url:
+        url: '{{ mirror_base_url }}/clients/ocp/{{ version }}/openshift-install-linux.tar.gz'
+        dest: '{{ download_dir }}/openshift-install-linux.tar.gz'
+        mode: '0666'
+
+    - name: Extract openshift-install-linux.tar.gz
+      unarchive:
+        src: '{{ download_dir }}/openshift-install-linux.tar.gz'
+        dest: /ocp
+        remote_src: yes
+
+    - name: Download openshift-client-linux.tar.gz
+      get_url:
+        url: '{{ mirror_base_url }}/clients/ocp/{{ version }}/openshift-client-linux.tar.gz'
+        dest: '{{ download_dir }}/openshift-client-linux.tar.gz'
+        mode: '0666'
+      
+    - name: Extract openshift-client-linux.tar.gz
+      unarchive:
+        src: '{{ download_dir }}/openshift-client-linux.tar.gz'
+        dest: /ocp
+        remote_src: yes
+      
+    - name: Download RHCOS
+      get_url:
+        url: '{{ item.url }}'
+        dest: '{{ download_dir }}/{{ item.filename }}'
+        mode: '0666'
+      with_items: "{{ rhcos_downloads }}"
+    
+    - name: copy treeinfo file
+      copy:
+        src: '{{ config_dir }}/ocp/downloads/.treeinfo'
+        dest: '{{ download_dir }}/.treeinfo'
+      
+    - name: Create version file
+      file:
+        path: '{{ download_dir }}/{{ version }}.txt'
+        state: touch
+        mode: '0666'

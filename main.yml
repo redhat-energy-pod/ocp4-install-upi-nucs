@@ -1,0 +1,6 @@
+---
+- import_playbook: generate_inventory.yml
+- import_playbook: generate_config.yml
+- import_playbook: download_ocp_service_node.yml
+- import_playbook: service_node.yml
+- import_playbook: generate_ocp_install_config.yml

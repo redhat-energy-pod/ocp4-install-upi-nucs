@@ -1,0 +1,22 @@
+version: 4.5.6
+domain: label-your-domain-here.com
+cluster_name: label-your-cluster-here
+ssh_key: ' your ssh key for logging into the cluster'
+pull_secret: 'REQUIRED_PULL_SECRET - get me from cluster.redhat.com'
+network:
+  slash_notation: x.x.x.x/24
+nodes:
+  user: root
+  service:
+    hostname: node1
+    ip_address: x.x.x.1
+  bootstrap:
+    hostname: bootstrap
+    ip_address: x.x.x.5
+  masters:
+    - hostname: node2
+      ip_address: x.x.x.2
+    - hostname: node3
+      ip_address: x.x.x.3
+    - hostname: node4
+      ip_address: x.x.x.4

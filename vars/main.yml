@@ -1,0 +1,4 @@
+---
+config_dir: '.config'
+templates_dir: 'templates'
+download_dir: /ocp/downloads

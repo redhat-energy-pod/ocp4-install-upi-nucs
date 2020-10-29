@@ -1,0 +1,69 @@
+---
+- hosts: service
+  gather_facts: false
+  vars_files:
+    - vars/main.yml
+
+  tasks:
+
+    - name: Delete dirs
+      file:
+        path: "{{ item }}"
+        state: absent
+      with_items:
+        - '/ocp/install'
+        - '/var/www/html/ignition'
+        - '/var/www/html/rhcos'
+        
+    - name: create dirs
+      file:
+        path: "{{ item }}"
+        state: directory
+      with_items:
+        - '/ocp/install'
+        - '/ocp/install/bkup'
+        - '/ocp/install/bkup/manifests'
+        - '/var/www/html'
+        - '/var/www/html/ignition'
+        - '/var/www/html/rhcos'
+
+    - name: copy install-config
+      template:
+        src: '{{ templates_dir }}/ocp/install/install-config.yml.j2'
+        dest: '/ocp/install/install-config.yaml'
+      
+    - name: backup install-config
+      copy: 
+        src: /ocp/install/install-config.yaml 
+        dest: /ocp/install/bkup/install-config.yaml
+        remote_src: yes
+      
+    - name: Create manifests
+      shell: /ocp/openshift-install create manifests --dir=/ocp/install --log-level=debug
+      
+    - name: Backup manifests
+      shell: 'cp -r /ocp/install/manifests /ocp/install/bkup'
+
+    - name: Backup crds
+      shell: 'cp -r /ocp/install/openshift /ocp/install/bkup'
+
+    - name: Create Ignitions
+      shell: /ocp/openshift-install create ignition-configs --dir=/ocp/install --log-level=debug
+      
+    - name: copy ignitions
+      shell: cp -r /ocp/install/*.ign /var/www/html/ignition/      
+
+    - name: restorecon
+      shell: restorecon -vR /var/www/html/
+    
+    - name: Change file ownership, group and permissions
+      file:
+        path: /var/www/html/ignition
+        mode: '0777'
+        recurse: yes
+    
+    - name: copy metal
+      copy: 
+        src: /ocp/downloads/metal.raw.gz
+        dest: /var/www/html/rhcos/metal.raw.gz
+        remote_src: yes

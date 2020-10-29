@@ -1,0 +1,39 @@
+$TTL 86400
+@ IN SOA dns-primary.{{ domain }}. admin.{{ domain }}. (
+  2020011800 ;Serial
+  3600 ;Refresh
+  1800 ;Retry
+  604800 ;Expire
+  86400 ;Minimum TTL
+)
+
+;Name Server Information
+@ IN NS dns-primary.{{ domain }}.
+
+;DNS for domain
+{{ nodes.bootstrap.hostname }}   IN A {{ nodes.bootstrap.ip_address }}
+dns-primary IN A {{ nodes.service.ip_address }}
+{{ nodes.service.hostname }}        IN A {{ nodes.service.ip_address }}
+{% for m in nodes.masters %}
+{{ m.hostname }}        IN A {{ m.ip_address }}
+{% endfor %}
+
+; The api points to the IP of your load balancer
+ocp		        IN A {{ nodes.service.ip_address }}
+api.{{ cluster_name }}		        IN A {{ nodes.service.ip_address }}
+api-int.{{ cluster_name }}             IN A {{ nodes.service.ip_address }}
+;
+; The wildcard also points to the load balancer
+*.apps.{{ cluster_name }}		IN A {{ nodes.service.ip_address }}
+
+; etcd
+{% for m in nodes.masters %}
+etcd-{{ loop.index0 }}.{{ cluster_name }}	        IN A {{ m.ip_address }}
+{% endfor %}
+
+; The SRV records are IMPORTANT....make sure you get these right...note the trailing dot at the end...
+{% for m in nodes.masters %}
+_etcd-server-ssl._tcp	IN SRV 0 10 2380 etcd-{{ loop.index0 }}.{{ cluster_name }}.{{ domain }}.
+{% endfor %}
+
+;EOF

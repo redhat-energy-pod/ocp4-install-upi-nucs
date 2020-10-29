@@ -1,0 +1,190 @@
+---
+- hosts: service
+  gather_facts: false
+  vars_files:
+    - vars/main.yml
+    
+  tasks:
+
+    - name: check .config directory
+      local_action: 'stat path={{ config_dir }}'
+      register: config_d
+
+    - name: Fail if .config does not exist
+      fail: msg="The .config directory does not exist"
+      when: config_d.stat.exists == False or config_d.stat.isdir == False
+
+    - name: yum dns
+      yum:
+        name: bind,bind-utils
+        state: latest
+      
+    - name: Make sure a service is enabled
+      systemd:
+        name: named
+        enabled: yes
+      
+    - name: copy named.conf
+      copy:
+        src: '{{ config_dir }}/etc/named.conf'
+        dest: '/etc/named.conf'
+        mode: '444'
+      
+    - name: copy db file
+      copy:
+        src: '{{ config_dir }}/var/named/{{ domain }}.db'
+        dest: '/var/named/{{ domain }}.db'
+        group: 'named'
+      
+    - name: copy zone file
+      copy:
+        src: '{{ config_dir }}/var/named/{{ domain }}.rev'
+        dest: '/var/named/{{ domain }}.rev'
+        group: 'named'
+      
+    - name: Make sure a service is restarted
+      systemd:
+        name: named
+        state: restarted
+      
+# httpd install and config
+
+    - name: yum 
+      yum:
+        name: httpd
+        state: latest
+      
+    - name: Make sure a service is enabled
+      systemd:
+        name: httpd
+        enabled: yes
+      
+    - name: copy httpd.conf
+      copy:
+        src: '{{ config_dir }}/etc/httpd/conf/httpd.conf'
+        dest: '/etc/httpd/conf/httpd.conf'
+        mode: '444'
+      
+    - name: httpd restarted
+      systemd:
+        name: httpd
+        state: restarted
+
+# haproxy install and config
+
+    - name: yum 
+      yum:
+        name: haproxy
+        state: latest
+
+    - name: Make sure a service is enabled
+      systemd:
+        name: haproxy
+        enabled: yes
+
+    - name: copy haproxy.cfg
+      copy:
+        src: '{{ config_dir }}/etc/haproxy/haproxy.cfg'
+        dest: '/etc/haproxy/haproxy.cfg'
+        mode: '444'
+    
+    - name: Allow haproxy to listen on tcp ports
+      seport:
+        ports: '{{ item }}'
+        proto: tcp
+        setype: http_port_t
+        state: present
+      with_items:
+        - 22623
+        - 6443 
+        - 80
+        - 443
+
+    - name: Set haproxy_connect_any flag on and keep it persistent across reboots
+      seboolean:
+        name: haproxy_connect_any
+        state: yes
+        persistent: yes
+
+    - name: haproxy restarted
+      systemd:
+        name: haproxy
+        state: restarted
+
+# nfs server install and config
+
+    - name: yum 
+      yum:
+        name: nfs-utils
+        state: latest
+
+    - name: Create nfs directories
+      file:
+        path: "{{ item }}"
+        state: directory
+        owner: nobody
+        group: 
+        mode: '0777'
+      with_items:
+        - '/nfs/ocp'
+        - '/nfs/ocp/registry'
+        - '/nfs/ocp/containers'
+
+    - name: copy /etc/exports
+      copy:
+        src: '{{ config_dir }}/etc/exports'
+        dest: '/etc/exports'
+        mode: '444'
+
+    - name: exportfs
+      shell: exportfs -arv
+
+    - name: Make sure a service is enabled
+      systemd:
+        name: nfs-server.service
+        enabled: yes
+
+    - name: nfs restarted
+      systemd:
+        name: nfs-server.service
+        state: restarted
+
+# libvirt server install and config
+
+    - name: yum 
+      yum:
+        name: ['virt-install', 'virt-viewer', 'virt-manager', 'libvirt-client']
+        state: latest
+
+# Open firewall
+
+    - name: Open ports
+      firewalld:
+        port: '{{ item }}'
+        permanent: yes
+        state: enabled
+      with_items:
+        - 80/tcp
+        - 443/tcp
+        - 8008/tcp
+        - 8080/tcp
+        - 6443/tcp
+        - 22623/tcp
+
+    - name: Open services
+      firewalld:
+        service: '{{ item }}'
+        permanent: yes
+        state: enabled
+      with_items:
+        - http
+        - https 
+        - dns
+        - nfs
+        - rpc-bind
+        - mountd
+      
+    - name: Reload firewalld
+      systemd:
+        name: firewalld
+        state: reloaded

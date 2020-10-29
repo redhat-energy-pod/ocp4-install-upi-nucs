@@ -1,0 +1,9 @@
+---
+- hosts: localhost
+  gather_facts: false
+  tasks:
+    - name: Add service host to service group
+      add_host:
+        hostname: '{{ nodes.service.ip_address }}'
+        ansible_user: '{{ nodes.user }}'
+        groups: service

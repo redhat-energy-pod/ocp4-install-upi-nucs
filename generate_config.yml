@@ -1,0 +1,59 @@
+---
+- hosts: localhost
+  gather_facts: false
+  vars_files:
+    - vars/main.yml
+  tasks:
+    - debug: var=ansible_facts
+    - name: Delete temp directory
+      file:
+        path: '{{ config_dir }}'
+        state: absent
+    
+    - name: Create {{ config_dir }} temp directory
+      file:
+        path: "{{ item }}"
+        state: directory
+      with_items:
+        - '{{ config_dir }}/etc'
+        - '{{ config_dir }}/var'
+        - '{{ config_dir }}/var/named'
+        - '{{ config_dir }}/etc/httpd/conf'
+        - '{{ config_dir }}/etc/haproxy'
+        - '{{ config_dir }}/ocp/downloads'
+    
+    - name: Create /etc/named.conf
+      template:
+        src: '{{ templates_dir }}/etc/named.conf.j2'
+        dest: '{{ config_dir }}/etc/named.conf'
+    
+    - name: Create named zone.db
+      template:
+        src: '{{ templates_dir }}/var/named/zone.db.j2'
+        dest: '{{ config_dir }}/var/named/{{ domain }}.db'
+    
+    - name: Create named zone.rev
+      template:
+        src: '{{ templates_dir }}/var/named/zone.rev.j2'
+        dest: '{{ config_dir }}/var/named/{{ domain }}.rev'
+    
+    - name: Create httpd.conf
+      template:
+        src: '{{ templates_dir }}/etc/httpd/conf/httpd.conf.j2'
+        dest: '{{ config_dir }}/etc/httpd/conf/httpd.conf'
+
+    - name: Create haproxy.cfg
+      template:
+        src: '{{ templates_dir }}/etc/haproxy/haproxy.cfg.j2'
+        dest: '{{ config_dir }}/etc/haproxy/haproxy.cfg'
+
+    - name: Create treeinfo file
+      template:
+        src: '{{ templates_dir }}/ocp/downloads/.treeinfo.j2'
+        dest: '{{ config_dir }}/ocp/downloads/.treeinfo'
+
+    - name: Copy file with owner and permissions
+      copy:
+        src: '{{ templates_dir }}/etc/exports'
+        dest: '{{ config_dir }}/etc/exports'
+        remote_src: yes
