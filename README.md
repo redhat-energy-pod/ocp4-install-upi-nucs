@@ -1,11 +1,13 @@
 # ocp4-upi-install
 
+Created by: Stephen Nimmo
+
 #### #######Changelog########## 
+Andrew Seifert:
 - updated general assembly of the infrastructure.
 - added rhel8.2 installation notes
 - added ansible on mac installation notes
 - added coreOS install information
-- added SELINUX information
 - added notation around pathing in ansible scripts
 - added htpassword notation updates
 
@@ -22,7 +24,9 @@
 - Execute `/ocp/openshift-install wait-for install-complete --dir=/ocp/install --log-level=debug` on {node1}
 - Create a user after cluster is complete.
 
-These playbooks are designed to perform a bare metal install of OCP 4.5 on Intel NUCs. Instructions are tailored for a bare metal install using 4 machines, where one machine hosts the services needed for the cluster and the other three are control plane nodes. 
+# About
+
+These playbooks are designed to perform a bare metal install of OCP 4.5 on Intel NUCs. Instructions are tailored for a bare metal install using 4 machines, where one machine hosts the services needed for the cluster and the other three are control plane nodes. Network is required to download parts of the install.
 
 The ansible playbooks are designed to:
 - Generate the necessary configs and install all services on the service node. 
