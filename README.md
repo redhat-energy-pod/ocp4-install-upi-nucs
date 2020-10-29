@@ -116,13 +116,12 @@ Download the RHCOS installer and flash a USB drive. The correct version to downl
 
 Boot into your instance using the RHCOS ISO Installer
 
-Once booted, press 'e' on the boot menu and append the following to the end of the boot options. 
+Once booted, press 'e' on the boot menu and append the following to the end of the boot options. The text below should be added after the text 'coreos.inst.install=true' (or something like that)
 
 } The example below is for the first control plane machine.
 
 ```
-ip={node2IP}::{gatewayIP}:255.255.255.0:{node2Name}.{yourDomain}.com::none nameserver={node1IP} coreos.inst.install_dev=sda coreos.inst.image_url=http://{node1IP}:8008/rhcos/metal.raw.gz
-coreos.inst.ignition_url=http://{node1IP}:8008/ignition/master.ign
+ip={node2IP}::{gatewayIP}:255.255.255.0:{node2Name}.{yourDomain}.com::none nameserver={node1IP} coreos.inst.install_dev=sda coreos.inst.image_url=http://{node1IP}:8008/rhcos/metal.raw.gz coreos.inst.ignition_url=http://{node1IP}:8008/ignition/master.ign
 ```
 
 Do that for the other two masters({node3},{node4}), changing the ip and hostname respectively. 
