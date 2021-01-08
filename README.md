@@ -10,9 +10,13 @@ Andrew Seifert:
 - added coreOS install information
 - added notation around pathing in ansible scripts
 - added htpassword notation updates
+- updated quick installation instructions to include earlier steps
 
 # Quick Instructions for Use
 
+- Install Red Hat Enterprise Linux 8.2 or higher onto node 1 ( services node ) from a USB
+- Copy over the coreOS install onto a USB for later use
+- Install Ansible onto a local workstation and clone this git repo to that workstation
 - Copy cluster_example.yml from /templates to the root of the project.
 - Rename cluster_example.yml to cluster.yml
 - Update the cluster.yml with the cluster information for your install.
@@ -47,7 +51,8 @@ The networking assumes a standard class C networking subnet ( can be adjusted to
 
 # Prerequisites
 
-- Install Ansible on the node you will be using to configure your scripts.  This generally will be your local machine and not part of the the 4 nucs. You can however choose to run these installs from {node1} with no issues
+- Install Ansible on the node you will be using to configure your scripts.  This generally will be your local machine and not part of the the 4 nucs. You can however choose to run these installs from {node1} with no issues.  General rule of thumb is to install Ansible on a linux box but instructions for MacOS are below as this can get weird fast with MAC.
+
   - Install on MacOS:
     - Homebrew: ```homebrew install ansible```
     - Python: If python is already installed run ```pip(or pip3 depending on version) install -g ansible```
@@ -57,13 +62,15 @@ The networking assumes a standard class C networking subnet ( can be adjusted to
 
 - Install RHEL 8.2 on services machine. ({node1})
     - Partitioning
-        - / - 100 GB
-        - /home - 100 GB
-        - /nfs - the rest! This will be used as an NFS server for OCP storage
+        - / - 100 GiB
+        - /boot 1024 MiB
+        - /swap 15 GiB
+        - /home - 100 GiB
+        - /nfs - the rest! This will be used as an NFS server for OCP storage.  You can just hit enter when creating the partition to use the rest of the storage.
     - Server Install
       - When installing your RHEL server select the default 'Server with GUI' option (top of list).  
       - Remove all options for extra installation on the right panel of the screen.
-- Copy pub key of the server you will be running ansible with to use for login
+- Create or copy and ssh pub key of the server you will be running ansible with to use for login
     - `ssh-copy-id -i ~/pathToSSHKey/{yourPublicKey} root@{node1}`
 
 - Setup a network bridge for libvirt to use for the bootstrap node.  This must be done first before you create your VM.
