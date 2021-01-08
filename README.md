@@ -12,6 +12,7 @@ Andrew Seifert:
 - added htpassword notation updates
 - updated quick installation instructions to include earlier steps
 - switched around a few sections for better flow
+- updated cluster.yml information to clarify needs
 
 # About
 
@@ -37,6 +38,7 @@ The networking assumes a standard class C networking subnet ( can be adjusted to
 # Quick Instructions for Use
 
 - Install Red Hat Enterprise Linux 8.2 or higher onto node 1 ( services node ) from a USB
+- Copy a pull secret down from Red Hat cloud.redhat.com (select openshift > cloud options > download pull secret)
 - Copy over the coreOS install onto a USB for later use
 - Install Ansible onto a local workstation and clone this git repo to that workstation
 - Copy cluster_example.yml from /templates to the root of the project.
@@ -94,6 +96,11 @@ nmcli connection up br0 && nmcli connection down eno1
 Copy cluster_example.yml from /templates to the root of the project.
 - Rename cluster_example.yml to cluster.yml
 - Update the cluster.yml with the cluster information for your install.
+  - Replace the ssh-key variable with the full public ssh key (cat the file) - leave the tick marks.
+  - Replace the pull secret variable with the pull secret (cat the file) - leave the tick marks.
+  - Enter your cidr key where it says 'slash notation'
+  - Enter the node names and ips where its asking for them
+  - Enter the ip for the bootstrap node - dont change the name
 - Execute `ansible-playbook -e @cluster.yml main.yml --ask-become-pass` from the root of the project.
   - This will generate all the configuration files needed as well as set up the services on your {node1}
 
