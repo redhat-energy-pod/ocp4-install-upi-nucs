@@ -61,6 +61,7 @@ The networking assumes a standard class C networking subnet ( can be adjusted to
 
 - Create(if needed) and copy an ssh key for Ansible to connect to the RHEL server with
   - `ssh-keygen -f /pathTokey/keyname`
+  - For this install it would be recommended to leave the password blank for the key.  Ansible will get tripped up in its defuault configuration.
 
 #### NOTE: Ansible supports Python 2.7 and 3.5 or higher.
 
