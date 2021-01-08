@@ -11,22 +11,7 @@ Andrew Seifert:
 - added notation around pathing in ansible scripts
 - added htpassword notation updates
 - updated quick installation instructions to include earlier steps
-
-# Quick Instructions for Use
-
-- Install Red Hat Enterprise Linux 8.2 or higher onto node 1 ( services node ) from a USB
-- Copy over the coreOS install onto a USB for later use
-- Install Ansible onto a local workstation and clone this git repo to that workstation
-- Copy cluster_example.yml from /templates to the root of the project.
-- Rename cluster_example.yml to cluster.yml
-- Update the cluster.yml with the cluster information for your install.
-- Execute `ansible-playbook -e @cluster.yml main.yml --ask-become-pass` from the root of the project.
-- Create network bridge for {serviceNode}
-- Create service node( {serviceNode})
-- Execute `/ocp/openshift-install wait-for bootstrap-complete --dir=/ocp/install --log-level=debug`
-- Install CoreOS on {node2name}, {node3name}, and {node4name}
-- Execute `/ocp/openshift-install wait-for install-complete --dir=/ocp/install --log-level=debug` on {node1}
-- Create a user after cluster is complete.
+- switched around a few sections for better flow
 
 # About
 
@@ -49,6 +34,22 @@ The networking assumes a standard class C networking subnet ( can be adjusted to
 
 #### Note: Ips are not specific and can be whatever one wants.  A good idea would be to whitelist these IPs on your home network to make sure no IPs are taken during install, reboots, etc.  Check with the router's information pages to understand network whitelisting if needed.
 
+# Quick Instructions for Use
+
+- Install Red Hat Enterprise Linux 8.2 or higher onto node 1 ( services node ) from a USB
+- Copy over the coreOS install onto a USB for later use
+- Install Ansible onto a local workstation and clone this git repo to that workstation
+- Copy cluster_example.yml from /templates to the root of the project.
+- Rename cluster_example.yml to cluster.yml
+- Update the cluster.yml with the cluster information for your install.
+- Execute `ansible-playbook -e @cluster.yml main.yml --ask-become-pass` from the root of the project.
+- Create network bridge for {serviceNode}
+- Create service node( {serviceNode})
+- Execute `/ocp/openshift-install wait-for bootstrap-complete --dir=/ocp/install --log-level=debug`
+- Install CoreOS on {node2name}, {node3name}, and {node4name}
+- Execute `/ocp/openshift-install wait-for install-complete --dir=/ocp/install --log-level=debug` on {node1}
+- Create a user after cluster is complete.
+
 # Prerequisites
 
 - Install Ansible on the node you will be using to configure your scripts.  This generally will be your local machine and not part of the the 4 nucs. You can however choose to run these installs from {node1} with no issues.  General rule of thumb is to install Ansible on a linux box but instructions for MacOS are below as this can get weird fast with MAC.
@@ -57,6 +58,9 @@ The networking assumes a standard class C networking subnet ( can be adjusted to
     - Homebrew: ```homebrew install ansible```
     - Python: If python is already installed run ```pip(or pip3 depending on version) install -g ansible```
       - If Python is not installed yet install the latest version of Python and then follow the pip installs above.
+
+- Create an ssh key for Ansible to connect to the RHEL server with
+  - `ssh-keygen -f /pathTokey/keyname`
 
 #### NOTE: Ansible supports Python 2.7 and 3.5 or higher.
 
@@ -70,7 +74,7 @@ The networking assumes a standard class C networking subnet ( can be adjusted to
     - Server Install
       - When installing your RHEL server select the default 'Server with GUI' option (top of list).  
       - Remove all options for extra installation on the right panel of the screen.
-- Create or copy and ssh pub key of the server you will be running ansible with to use for login
+- Create or copy an ssh pub key of the server you will be running ansible with to use for login
     - `ssh-copy-id -i ~/pathToSSHKey/{yourPublicKey} root@{node1}`
 
 - Setup a network bridge for libvirt to use for the bootstrap node.  This must be done first before you create your VM.
