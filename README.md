@@ -59,7 +59,7 @@ The networking assumes a standard class C networking subnet ( can be adjusted to
     - Python: If python is already installed run ```pip(or pip3 depending on version) install -g ansible```
       - If Python is not installed yet install the latest version of Python and then follow the pip installs above.
 
-- Create an ssh key for Ansible to connect to the RHEL server with
+- Create(if needed) and copy an ssh key for Ansible to connect to the RHEL server with
   - `ssh-keygen -f /pathTokey/keyname`
 
 #### NOTE: Ansible supports Python 2.7 and 3.5 or higher.
