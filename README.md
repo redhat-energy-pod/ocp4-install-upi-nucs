@@ -120,7 +120,7 @@ From {node1}, start the virtual machine. *You will need to be logged in to the U
 Once booted, press tab on the boot menu and append the following to the end of the boot options. Copy the below out, edit the required fields before pasting or writing into the VM boot config.
 
 ```
-ip={serviceNodeIP}::{gatewayIP}:255.255.255.0:bootstrap.{yourDomain}.com::none nameserver={node1IP} coreos.inst.install_dev=vda coreos.inst.image_url=http://{node1IP}:8008/rhcos/metal.raw.gz coreos.inst.ignition_url=http://{node1IP}:8008/ignition/bootstrap.ign
+ip={BootstrapNodeIP}::{gatewayIP}:255.255.255.0:bootstrap.{yourDomain}.com::none nameserver={node1IP} coreos.inst.install_dev=vda coreos.inst.image_url=http://{node1IP}:8008/rhcos/metal.raw.gz coreos.inst.ignition_url=http://{node1IP}:8008/ignition/bootstrap.ign
 ```
 
 # Bootstrap the OCP cluster on {node1}
