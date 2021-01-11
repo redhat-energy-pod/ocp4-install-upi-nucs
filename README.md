@@ -80,7 +80,7 @@ The services node {node1} will provide the cluster dns, nfs, http, tftp, and hap
     - Server Install
       - When installing your RHEL server select the default 'Server with GUI' option (top of list).  
       - Remove all options for extra installation on the right panel of the screen.
-- Create or copy an ssh pub key of the server you will be running ansible with to use for login
+- Create or copy an ssh pub key of the server you will be running ansible with to use for login.  To validate go to the node1 and check /root/.ssh/authorized keys for the key applied in this file.
     - `ssh-copy-id -i ~/pathToSSHKey/{yourPublicKey} root@{node1}`
 
 - Setup a network bridge for libvirt to use for the bootstrap node.  This must be done first before you create your VM.
