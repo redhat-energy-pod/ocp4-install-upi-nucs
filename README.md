@@ -13,6 +13,7 @@ Andrew Seifert:
 - updated quick installation instructions to include earlier steps
 - switched around a few sections for better flow
 - updated cluster.yml information to clarify needs
+- added more regarding what services the node1 carries on it
 
 # About
 
@@ -34,6 +35,8 @@ The networking assumes a standard class C networking subnet ( can be adjusted to
 - {node4Name}.{yourdomain}.com - {subnet}.14
 
 #### Note: Ips are not specific and can be whatever one wants.  A good idea would be to whitelist these IPs on your home network to make sure no IPs are taken during install, reboots, etc.  Check with the router's information pages to understand network whitelisting if needed.
+
+The services node {node1} will provide the cluster dns, nfs, http, tftp, and haproxy.  For the purpose of this install it is best to allow these to be the default and any changes can be either done separately after the install or feel free to fork the project and make a new version of it.
 
 # Quick Instructions for Use
 
