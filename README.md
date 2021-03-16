@@ -86,13 +86,13 @@ The services node {node1} will provide the cluster dns, nfs, http, tftp, and hap
 - Setup a network bridge for libvirt to use for the bootstrap node.  This must be done first before you create your VM.
 ```
 nmcli connection add type bridge con-name {bridgeName} ifname {bridgeName}
-nmcli connection add type ethernet slave-type bridge con-name {bridgeName}-eno1 ifname eno1 master {bridgename}
+nmcli connection add type ethernet slave-type bridge con-name {bridgeName}-{adapter-name} ifname {adapter-name} master {bridgename}
 nmcli connection modify br0 ipv4.addresses '{node1IP}/24'
 nmcli connection modify br0 ipv4.gateway '{gatewayIP}'
 nmcli connection modify br0 ipv4.dns '{dnsIP} 8.8.8.8'
 nmcli connection modify br0 ipv4.method manual
 nmcli connection modify br0 bridge.priority '16384'
-nmcli connection up br0 && nmcli connection down eno1
+nmcli connection up br0 && nmcli connection down {adapter-name}
 ```
 ## Generate your scripts via Ansible from {serviceNode} or local host
 
