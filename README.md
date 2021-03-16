@@ -116,9 +116,9 @@ Copy cluster_example.yml from /templates to the root of the project.
 
 # Start the Bootstrap VM
 
-From {node1}, start the virtual machine. *You will need to be logged in to the UI of the server*. Run the command below, then open the Virtual Machine Manager, select the VM to open. It seems that sometimes the playbook doesn't start libvirtd in which case run 'systemctl start libvirtd' to get it to build the VM.
+From {node1}, start the virtual machine. *You will need to be logged in to the UI of the server*. Run the command below, then open the Virtual Machine Manager, select the VM to open. It seems that sometimes the playbook doesn't start libvirtd in which case run 'systemctl start libvirtd' to get it to build the VM.  In the below text modify { } variables to fit your environment.
 
-`virt-install --name=bootstrap --vcpus=4 --ram=8192 --disk path=/nfs/libvirt/images/bootstrap.qcow2,size=120,bus=virtio --os-variant rhel8.0 --network bridge=br0,model=virtio --boot menu=on --cdrom /ocp/downloads/installer.iso`
+`virt-install --name=bootstrap --vcpus=4 --ram=8192 --disk path=/nfs/libvirt/images/bootstrap.qcow2,size=120,bus=virtio --os-variant rhel8.0 --network bridge={bridgeName},model=virtio --boot menu=on --cdrom /ocp/downloads/installer.iso`
 
 Once booted, press tab on the boot menu and append the following to the end of the boot options. Copy the below out, edit the required fields before pasting or writing into the VM boot config.
 
