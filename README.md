@@ -87,12 +87,12 @@ The services node {node1} will provide the cluster dns, nfs, http, tftp, and hap
 ```
 nmcli connection add type bridge con-name {bridgeName} ifname {bridgeName}
 nmcli connection add type ethernet slave-type bridge con-name {bridgeName}-{adapter-name} ifname {adapter-name} master {bridgename}
-nmcli connection modify br0 ipv4.addresses '{node1IP}/24'
-nmcli connection modify br0 ipv4.gateway '{gatewayIP}'
-nmcli connection modify br0 ipv4.dns '{dnsIP} 8.8.8.8'
-nmcli connection modify br0 ipv4.method manual
-nmcli connection modify br0 bridge.priority '16384'
-nmcli connection up br0 && nmcli connection down {adapter-name}
+nmcli connection modify {bridgeName} ipv4.addresses '{node1IP}/24'
+nmcli connection modify {bridgeName} ipv4.gateway '{gatewayIP}'
+nmcli connection modify {bridgeName} ipv4.dns '{node1IP}' 8.8.8.8' (in this instance we will create our dns services on the bootstrap server)
+nmcli connection modify {bridgeName} ipv4.method manual
+nmcli connection modify {bridgeName} bridge.priority '16384'
+nmcli connection up {bridgeName} && nmcli connection down {adapter-name}
 ```
 ## Generate your scripts via Ansible from {serviceNode} or local host
 
