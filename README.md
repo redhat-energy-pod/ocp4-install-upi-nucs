@@ -70,7 +70,7 @@ The services node {node1} will provide the cluster dns, nfs, http, tftp, and hap
 
 #### NOTE: Ansible supports Python 2.7 and 3.5 or higher.
 
-- Install RHEL 8.2 on services machine. ({node1})
+- Install RHEL 8.2 or higer on services machine. ({node1})
     - Partitioning
         - / - 100 GiB
         - /boot 1024 MiB
@@ -116,7 +116,7 @@ Copy cluster_example.yml from /templates to the root of the project.
 
 # Start the Bootstrap VM
 
-From {node1}, start the virtual machine. *You will need to be logged in to the UI of the server*. Run the command below, then open the Virtual Machine Manager, select the VM to open. 
+From {node1}, start the virtual machine. *You will need to be logged in to the UI of the server*. Run the command below, then open the Virtual Machine Manager, select the VM to open. It seems that sometimes the playbook doesn't start libvirtd in which case run 'systemctl start libvirtd' to get it to build the VM.
 
 `virt-install --name=bootstrap --vcpus=4 --ram=8192 --disk path=/nfs/libvirt/images/bootstrap.qcow2,size=120,bus=virtio --os-variant rhel8.0 --network bridge=br0,model=virtio --boot menu=on --cdrom /ocp/downloads/installer.iso`
 
